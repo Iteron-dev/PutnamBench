@@ -9,7 +9,7 @@ What is the largest possible radius of a circle contained in a $4$-dimensional h
 -/
 theorem putnam_2008_b3
     (H : Set (EuclideanSpace ℝ (Fin 4)))
-    (H_def : H = {P : Fin 4 → ℝ | ∀ i : Fin 4, |P i| ≤ 1 / 2})
+    (H_def : H = {P : (EuclideanSpace ℝ (Fin 4)) | ∀ i : Fin 4, |P i| ≤ 1 / 2})
     (contains : ℝ → Prop)
     (contains_def : ∀ r, contains r ↔
       ∃ᵉ (A : AffineSubspace ℝ (EuclideanSpace ℝ (Fin 4))) (C ∈ A),
