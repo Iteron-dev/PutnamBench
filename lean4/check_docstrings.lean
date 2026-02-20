@@ -2,7 +2,7 @@ import Mathlib.Lean.CoreM
 import Mathlib.Util.GetAllModules
 import Lean.Elab.Frontend
 import Batteries.Data.String.Matcher
-import Lean.Util.SearchPath
+import Lean.Util.Path
 
 
 open Lean Elab Command Frontend
@@ -97,13 +97,13 @@ where
     let mut raw ← IO.FS.readFile fname
     let .some thm := raw.findSubstr? "\ntheorem" | throwError "Cannot find theorem command"
     raw :=
-      raw.extract 0 thm.startPos
+      String.Pos.Raw.extract raw ⟨0⟩ thm.startPos
       ++ "\n/--\n" ++ entry.informal_statement.trim ++ "\n-/"
-      ++ raw.extract thm.startPos raw.endPos
+      ++ String.Pos.Raw.extract raw thm.startPos raw.rawEndPos
     IO.FS.writeFile fname raw
 
 def main : IO UInt32 := do
-  searchPathRef.set compile_time_search_path%
+  initSearchPath (← findSysroot)
   let json ← IO.ofExcept <| Lean.Json.parse <| ← IO.FS.readFile (".." / "informal" / "putnam.json")
   let data : Array InformalJsonEntry ← IO.ofExcept <| fromJson? json
   CoreM.withImportModules (← allModules) do
